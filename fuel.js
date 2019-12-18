@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 const fs = require('fs')
 
-const realModules = fs.readFileSync('./modules.txt', 'utf-8')
+const realModules = fs.readFileSync('./modules.fuel', 'utf-8')
     .split('\n')
     .map(l => l.trim())
     .filter(l => l !== '')
