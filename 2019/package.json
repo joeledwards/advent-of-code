@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/joeledwards/advent-of-code#readme",
   "dependencies": {
-    "durations": "^3.4.2"
+    "durations": "^3.4.2",
+    "ramda": "^0.26.1"
   }
 }
