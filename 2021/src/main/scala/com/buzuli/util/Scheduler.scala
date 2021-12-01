@@ -16,7 +16,7 @@ object Scheduled {
 }
 
 class Scheduler {
-  val executor = new ScheduledThreadPoolExecutor(1)
+  val executor = new ScheduledThreadPoolExecutor(2)
 
   def runnable(task: => Unit): Runnable = new Runnable {
     def run(): Unit = task
@@ -52,10 +52,14 @@ class Scheduler {
       )
     }
   )
+
+  def shutdown(): Unit = executor.shutdown()
 }
 
 object Scheduler {
   private lazy val defaultScheduler: Scheduler = new Scheduler
   def default: Scheduler = defaultScheduler
   def create(): Scheduler = new Scheduler
+
+  def shutdown(): Unit = defaultScheduler.shutdown()
 }

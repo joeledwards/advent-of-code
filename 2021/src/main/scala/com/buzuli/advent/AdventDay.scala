@@ -26,4 +26,6 @@ abstract class AdventDay(
   def failure(message: String): DayResult = DayResult(this, false, message)
 
   def name: String = s"Day ${day}"
+
+  override def toString: String = name
 }
