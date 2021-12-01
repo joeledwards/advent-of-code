@@ -11,8 +11,8 @@ import scala.util.{Failure, Success, Try}
 object Main extends App with LazyLogging {
   implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
 
-  val concurrency: AdventConcurrency = AdventConcurrent(10)
   //val concurrency: AdventConcurrency = AdventSerial
+  val concurrency: AdventConcurrency = AdventConcurrent(8)
 
   // Setup
   def before(): Future[AdventContext] = {
