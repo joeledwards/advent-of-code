@@ -4,7 +4,6 @@ import com.buzuli.advent.{AdventConcurrent, AdventContext, AdventDay, AdventSeri
 import com.buzuli.util.{Async, AsyncTask}
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 object Days extends LazyLogging {
@@ -23,12 +22,9 @@ object Days extends LazyLogging {
           Future.successful(Nil)
         ) { (previousDayFuture, nextDay) =>
           previousDayFuture.flatMap { outcomes =>
-            logger.info(s"Mapping to day ${nextDay} ...")
-            Async.delay(100.milliseconds) flatMap { _ =>
-              logger.info(s"Delay completed. Executing ${nextDay} ...")
+            Future.unit flatMap { _ =>
               nextDay.execute(context)
             } map { outcome =>
-              logger.info(s"Store results for ${nextDay} ...")
               outcomes :+ outcome
             }
           }
@@ -39,12 +35,8 @@ object Days extends LazyLogging {
           dayList map { day =>
             new AsyncTask[DayResult] {
               override def execute(): Future[DayResult] = {
-                logger.info(s"Mapping to day ${day} ...")
-                Async.delay(100.milliseconds) flatMap { _ =>
-                  logger.info(s"Delay completed. Executing ${day} ...")
-                  day.execute(context) andThen {
-                    case _ => logger.info(s"Store results for ${day} ...")
-                  }
+                Future.unit flatMap { _ =>
+                  day.execute(context)
                 }
               }
             }

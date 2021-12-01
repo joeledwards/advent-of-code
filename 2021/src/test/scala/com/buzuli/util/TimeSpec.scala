@@ -1,11 +1,40 @@
 package com.buzuli.util
 
 import scala.concurrent.duration._
-
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.time.Instant
+import java.util.concurrent.TimeUnit
+
 class TimeSpec extends AnyWordSpec with Matchers {
+  "diff" when {
+    "comparing instants" should {
+      "report the correct difference" in {
+        def m(milli: Long): Instant = Instant.ofEpochMilli(milli)
+        def d(millis: Long): Duration = Duration(millis, TimeUnit.MILLISECONDS)
+
+        Time.diff(m(1), m(1)) should equal(d(0))
+        Time.diff(m(0), m(1)) should equal(d(1))
+        Time.diff(m(0), m(10)) should equal(d(10))
+        Time.diff(m(1), m(0)) should equal(d(-1))
+      }
+    }
+  }
+
+  "since" when {
+    "comparing to an instant" should {
+      "report the correct difference" in {
+        val now = Time.now
+        assert(Time.since(now).toMillis >= 0)
+
+        assert(Time.since(now, now).toMillis == 0)
+        assert(Time.since(now, now.plusMillis(1)).toMillis == 1)
+        assert(Time.since(now, now.minusMillis(1)).toMillis == -1)
+      }
+    }
+  }
+
   "prettyDuration" when {
     "formatting durations" should {
       "correctly format sub-millisecond durations" in {

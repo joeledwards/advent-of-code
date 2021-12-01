@@ -5,7 +5,7 @@ import com.buzuli.advent.{AdventContext, AdventDay, DayResult}
 import scala.concurrent.{ExecutionContext, Future}
 
 object day3 extends AdventDay(3) {
-  override def execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
+  override def _execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
     Future.successful(failure("Not implemented"))
   }
 }

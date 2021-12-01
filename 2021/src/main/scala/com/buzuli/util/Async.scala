@@ -65,7 +65,7 @@ object Async extends LazyLogging {
 
       val nextTaskFuture = nextTask
 
-      logger.info(s"[${result}] outstanding=${outstanding.length} completed=${completed.length}")
+      logger.trace(s"[${result}] outstanding=${outstanding.length} completed=${completed.length}")
 
       nextTaskFuture
     }
