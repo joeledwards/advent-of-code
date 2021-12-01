@@ -1,6 +1,7 @@
 
 val projectName = "advent-2021"
 
+name := projectName
 version := "1.0.0"
 scalaVersion := "2.13.2"
 organization := "com.buzuli"
@@ -15,7 +16,11 @@ lazy val root = (project in file(".")).
   enablePlugins(AssemblyPlugin)
  */
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1"
+// https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+
+// https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.7"
 
 // https://mvnrepository.com/artifact/com.softwaremill.sttp.client/core
 libraryDependencies += "com.softwaremill.sttp.client" %% "core" % "2.2.4"
@@ -32,6 +37,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.2.0"
 // https://mvnrepository.com/artifact/com.typesafe.play/play-json
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.0"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
 
 // Helpful when testing (recommended by scalatest)
 logBuffered in Test := false

@@ -6,14 +6,14 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 
 object Time {
-  val NANOS_PER_MICRO = 1000L
-  val NANOS_PER_MILLI = NANOS_PER_MICRO * 1000L
-  val NANOS_PER_SECOND = NANOS_PER_MILLI * 1000L
-  val NANOS_PER_MINUTE = NANOS_PER_SECOND * 60L
-  val NANOS_PER_HOUR = NANOS_PER_MINUTE * 60L
-  val NANOS_PER_DAY = NANOS_PER_HOUR * 24L
+  val NANOS_PER_MICRO: Long = 1000L
+  val NANOS_PER_MILLI: Long = NANOS_PER_MICRO * 1000L
+  val NANOS_PER_SECOND: Long = NANOS_PER_MILLI * 1000L
+  val NANOS_PER_MINUTE: Long = NANOS_PER_SECOND * 60L
+  val NANOS_PER_HOUR: Long = NANOS_PER_MINUTE * 60L
+  val NANOS_PER_DAY: Long = NANOS_PER_HOUR * 24L
 
-  def now(): Instant = Instant.now
+  def now: Instant = Instant.now
   def since(whence: Instant): Duration = diff(whence, now)
   def diff(start: Instant, end: Instant): Duration = {
     Duration(
