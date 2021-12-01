@@ -1,9 +1,9 @@
 package com.buzuli.advent
 
-import com.buzuli.util.Time
+import com.buzuli.util.{Async, Time}
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, DurationInt}
 import scala.concurrent.{ExecutionContext, Future}
 
 case class DayResult(
@@ -25,7 +25,10 @@ abstract class AdventDay(
 ) extends LazyLogging {
   final def execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
     val start = Time.now
-    _execute(context) map { result =>
+
+    Future.unit flatMap { _ =>
+      _execute(context)
+    } map { result =>
       result.copy(duration = Some(Time.since(start)))
     }
   }
