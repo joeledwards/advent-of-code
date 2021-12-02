@@ -1,6 +1,5 @@
 package com.buzuli.advent.days
 
-import com.buzuli.advent.days.day1.{data, logger, name}
 import com.buzuli.advent.{AdventContext, AdventDay, DayResult}
 import com.buzuli.util.Time
 
