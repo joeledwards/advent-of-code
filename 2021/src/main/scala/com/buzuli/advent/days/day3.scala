@@ -38,5 +38,6 @@ object day3 extends AdventDay(3) {
     }
   }
 
-  val data: List[Int] = Nil
+  object data {
+  }
 }
