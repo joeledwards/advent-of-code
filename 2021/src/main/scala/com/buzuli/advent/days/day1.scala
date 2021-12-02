@@ -1,28 +1,58 @@
 package com.buzuli.advent.days
 
 import com.buzuli.advent.{AdventContext, AdventDay, DayResult}
+import com.buzuli.util.Time
 
 import scala.concurrent.{ExecutionContext, Future}
 
 object day1 extends AdventDay(1) {
   override def _execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
-    puzzle1.run()
-    Future.successful(failure(s"""Missing Puzzle 2"""))
+    val p1 = puzzle1.run()
+    val p2 = puzzle2.run()
+    Future.successful(success(s"""Puzzle1[${p1}] Puzzle2[${p2}]"""))
   }
 
   object puzzle1 {
-    def run(): Unit = {
-      val (increases, _) = data.soundings.foldLeft[(Int, Option[Int])]((0, None)) { (acc, sounding) =>
-        acc match {
-          case (increases, Some(lastSounding)) if sounding > lastSounding => (increases + 1, Some(sounding))
-          case (increases, _) => (increases, Some(sounding))
+    def run(): Int = {
+      val (duration, value) = Time.timing {
+        val (increases, _) = data.soundings.foldLeft[(Int, Option[Int])]((0, None)) { (acc, sounding) =>
+          acc match {
+            case (increases, Some(lastSounding)) if sounding > lastSounding => (increases + 1, Some(sounding))
+            case (increases, _) => (increases, Some(sounding))
+          }
         }
+        increases
       }
-      logger.info(s"${name} Puzzle 1 => ${increases}")
+
+      logger.info(s"${name} Puzzle 1 => ${value} (${duration})")
+
+      value
     }
   }
 
   object puzzle2 {
+    def run(): Int = {
+      val (duration, value) = Time.timing {
+        val (increases, _) = data.soundings.foldLeft[(Int, List[Int])]((0, Nil)) { (acc, sounding) =>
+          acc match {
+            case (increases, a :: b :: c :: Nil) => {
+              val lastCount = a + b + c
+              val thisCount = sounding + a + b
+              val increase = if (thisCount > lastCount) 1 else 0
+              (increases + increase, sounding :: a :: b :: Nil)
+            }
+            case (increases, contributors) => {
+              (increases, sounding :: contributors)
+            }
+          }
+        }
+        increases
+      }
+
+      logger.info(s"${name} Puzzle 2 => ${value} (${duration})")
+
+      value
+    }
   }
 
   object data {

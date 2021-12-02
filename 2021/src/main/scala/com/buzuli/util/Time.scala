@@ -2,8 +2,9 @@ package com.buzuli.util
 
 import java.time.Instant
 import java.util.concurrent.TimeUnit
-
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
+import scala.util.Try
 
 object Time {
   val NANOS_PER_MICRO: Long = 1000L
@@ -29,5 +30,24 @@ object Time {
     case nanos if nanos >= NANOS_PER_SECOND => s"${nanos / NANOS_PER_SECOND}.${thousandths(nanos / NANOS_PER_MILLI % 1000)}s"
     case nanos if nanos >= NANOS_PER_MILLI => s"${nanos / NANOS_PER_MILLI}.${thousandths(nanos / NANOS_PER_MICRO % 1000)}ms"
     case nanos => s"${nanos / NANOS_PER_MICRO}.${thousandths(nanos % 1000)}us"
+  }
+
+  def timing[T](action: => T): (Duration, T) = {
+    val start = now
+    val result: T = action
+    val duration = since(start)
+    (duration, result)
+  }
+
+  def safeTiming[T](action: => T): Try[(Duration, T)] = Try(timing(action))
+
+  def asyncTiming[T](action: => Future[T])(implicit ec: ExecutionContext): Future[(Duration, T)] = {
+    val start = now
+    Future.unit flatMap { _ =>
+      action
+    } map { result =>
+      val duration = since(start)
+      (duration, result)
+    }
   }
 }
