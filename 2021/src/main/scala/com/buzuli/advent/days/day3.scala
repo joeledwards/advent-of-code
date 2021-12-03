@@ -10,8 +10,7 @@ object day3 extends AdventDay(3) {
     val p1 = puzzle1.run()
     val p2 = puzzle2.run()
 
-    //Future.successful(success(s"""Puzzle1[${p1}] Puzzle2[${p2}]"""))
-    Future.successful(failure("Not implemented"))
+    Future.successful(success(s"""Puzzle1[${p1}] Puzzle2[${p2}]"""))
   }
 
   object puzzle1 {
