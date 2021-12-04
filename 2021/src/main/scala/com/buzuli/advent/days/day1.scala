@@ -55,8 +55,19 @@ object day1 extends AdventDay(1) {
   }
 
   object data {
-    val soundings: List[Int] =
-      """
+    val soundings: List[Int] = {
+      raw
+        .split("\n")
+        .toList
+        .view
+        .map(_.trim)
+        .filter(_.nonEmpty)
+        .map(_.toInt)
+        .toList
+    }
+
+    lazy val raw: String = {
+        """
         |124
         |125
         |127
@@ -2058,12 +2069,6 @@ object day1 extends AdventDay(1) {
         |8563
         |8564
         |""".stripMargin
-        .split("\n")
-        .toList
-        .view
-        .map(_.trim)
-        .filter(_.nonEmpty)
-        .map(_.toInt)
-        .toList
+    }
   }
 }

@@ -66,10 +66,27 @@ object day4 extends AdventDay(4) {
   }
 
   object data {
-    val selections: List[Int] = "62,55,98,93,48,28,82,78,19,96,31,42,76,25,34,4,18,80,66,6,14,17,57,54,90,27,40,47,9,36,97,56,87,61,91,1,64,71,99,38,70,5,94,85,49,59,69,26,21,60,0,79,2,95,11,84,20,24,8,51,46,44,88,22,16,53,7,32,89,67,15,86,41,92,10,77,68,63,43,75,33,30,81,37,83,3,39,65,12,45,23,73,72,29,52,58,35,50,13,74"
-      .split(",")
-      .map(_.toInt)
-      .toList
+    val (_selections: String, _boards: List[String]) = {
+      {
+        raw
+          .split("\n\n")
+          .view
+          .map(_.trim)
+          .filter(_.nonEmpty)
+          .toList
+      } match {
+        case s :: b => (s, b)
+      }
+    }
+
+    val selections: List[Int] = {
+      _selections
+        .split(",")
+        .map(_.toInt)
+        .toList
+    }
+
+    def boards: List[Board] = _boards.map { Board }
 
     case class Board(
       boardText: String,
@@ -132,7 +149,10 @@ object day4 extends AdventDay(4) {
       }
     }
 
-    def boards: List[Board] = """
+    lazy val raw: String = {
+      """
+      |62,55,98,93,48,28,82,78,19,96,31,42,76,25,34,4,18,80,66,6,14,17,57,54,90,27,40,47,9,36,97,56,87,61,91,1,64,71,99,38,70,5,94,85,49,59,69,26,21,60,0,79,2,95,11,84,20,24,8,51,46,44,88,22,16,53,7,32,89,67,15,86,41,92,10,77,68,63,43,75,33,30,81,37,83,3,39,65,12,45,23,73,72,29,52,58,35,50,13,74
+      |
       |10 83 98 12 33
       |38 68  2 99 85
       |16 89 54 50 97
@@ -734,8 +754,6 @@ object day4 extends AdventDay(4) {
       |19  5 51 70  3
       |
       |""".stripMargin
-      .split("\n\n")
-      .toList
-      .map { Board }
+    }
   }
 }
