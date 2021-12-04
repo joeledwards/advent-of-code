@@ -9,10 +9,10 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 object Main extends App with LazyLogging {
-  implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
-
   //val concurrency: AdventConcurrency = AdventSerial
   val concurrency: AdventConcurrency = AdventConcurrent(8)
+  val cec: CustomExecutionContext = ExecutionContexts.executor(8)
+  implicit val ec: ExecutionContext = cec.ec
 
   // Setup
   def before(): Future[AdventContext] = {
@@ -57,4 +57,7 @@ object Main extends App with LazyLogging {
       logger.error("Error in advent:", error)
     }
   }
+
+  // We will hang otherwise.
+  cec.halt()
 }

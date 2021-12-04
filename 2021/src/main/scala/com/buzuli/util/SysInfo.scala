@@ -8,6 +8,9 @@ import scala.util.{Failure, Success, Try}
 import scala.jdk.CollectionConverters._
 
 object SysInfo {
+  val cpuCount: Int = Runtime.getRuntime.availableProcessors
+  val parallelism: Int = Math.max(2, cpuCount)
+
   val host: Koozie[String] = Koozie.sync(
     Some(InetAddress.getLocalHost.getHostName),
     Some(Duration(1, "minute"))

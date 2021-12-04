@@ -7,52 +7,51 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object day1 extends AdventDay(1) {
   override def _execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
-    val p1 = puzzle1.run()
-    val p2 = puzzle2.run()
-    Future.successful(success(s"""Puzzle1[${p1}] Puzzle2[${p2}]"""))
+    val r1 = puzzle1
+    val r2 = puzzle2
+    for {
+      p1 <- r1
+      p2 <- r2
+    } yield success(s"""Puzzle1 => ${p1} | Puzzle2 => ${p2}""")
   }
 
-  object puzzle1 {
-    def run(): Int = {
-      val (duration, value) = Time.timing {
-        val (increases, _) = data.soundings.foldLeft[(Int, Option[Int])]((0, None)) { (acc, sounding) =>
-          acc match {
-            case (increases, Some(lastSounding)) if sounding > lastSounding => (increases + 1, Some(sounding))
-            case (increases, _) => (increases, Some(sounding))
-          }
+  def puzzle1(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (duration, value) = Time.timing {
+      val (increases, _) = data.soundings.foldLeft[(Int, Option[Int])]((0, None)) { (acc, sounding) =>
+        acc match {
+          case (increases, Some(lastSounding)) if sounding > lastSounding => (increases + 1, Some(sounding))
+          case (increases, _) => (increases, Some(sounding))
         }
-        increases
       }
-
-      logger.info(s"${name} Puzzle 1 => ${value} (${duration})")
-
-      value
+      increases
     }
+
+    logger.info(s"${name} Puzzle 1 => ${value} (${Time.prettyDuration(duration)})")
+
+    value
   }
 
-  object puzzle2 {
-    def run(): Int = {
-      val (duration, value) = Time.timing {
-        val (increases, _) = data.soundings.foldLeft[(Int, List[Int])]((0, Nil)) { (acc, sounding) =>
-          acc match {
-            case (increases, a :: b :: c :: Nil) => {
-              val lastCount = a + b + c
-              val thisCount = sounding + a + b
-              val increase = if (thisCount > lastCount) 1 else 0
-              (increases + increase, sounding :: a :: b :: Nil)
-            }
-            case (increases, contributors) => {
-              (increases, sounding :: contributors)
-            }
+  def puzzle2(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (duration, value) = Time.timing {
+      val (increases, _) = data.soundings.foldLeft[(Int, List[Int])]((0, Nil)) { (acc, sounding) =>
+        acc match {
+          case (increases, a :: b :: c :: Nil) => {
+            val lastCount = a + b + c
+            val thisCount = sounding + a + b
+            val increase = if (thisCount > lastCount) 1 else 0
+            (increases + increase, sounding :: a :: b :: Nil)
+          }
+          case (increases, contributors) => {
+            (increases, sounding :: contributors)
           }
         }
-        increases
       }
-
-      logger.info(s"${name} Puzzle 2 => ${value} (${duration})")
-
-      value
+      increases
     }
+
+    logger.info(s"${name} Puzzle 2 => ${value} (${Time.prettyDuration(duration)})")
+
+    value
   }
 
   object data {

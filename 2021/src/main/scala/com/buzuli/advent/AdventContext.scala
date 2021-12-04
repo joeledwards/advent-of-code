@@ -5,11 +5,13 @@ import com.buzuli.util.Time
 import java.time.Instant
 import scala.concurrent.duration.Duration
 
-sealed trait AdventConcurrency
-case object AdventSerial extends AdventConcurrency
-case class AdventConcurrent(concurrency: Int) extends AdventConcurrency {
-  assert(concurrency > 0 && concurrency < 26)
+sealed trait AdventConcurrency {
+  def concurrency: Int
 }
+case object AdventSerial extends AdventConcurrency {
+  val concurrency = 1
+}
+case class AdventConcurrent(concurrency: Int) extends AdventConcurrency
 
 case class AdventContext(
   start: Instant = Time.now,

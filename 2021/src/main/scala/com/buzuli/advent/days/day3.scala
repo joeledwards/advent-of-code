@@ -7,78 +7,74 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object day3 extends AdventDay(3) {
   override def _execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
-    val p1 = puzzle1.run()
-    val p2 = puzzle2.run()
-
-    Future.successful(success(s"""Puzzle1[${p1}] Puzzle2[${p2}]"""))
+    val r1 = puzzle1
+    val r2 = puzzle2
+    for {
+      p1 <- r1
+      p2 <- r2
+    } yield success(s"""Puzzle1 => ${p1} | Puzzle2 => ${p2}""")
   }
 
-  object puzzle1 {
-    def run(): Int = {
-      val (duration, value) = Time.timing {
-
-        val bits = data.diagnostics.foldLeft[List[Int]]("000000000000".toList.map(_ => 0)) { (acc, sample) =>
-          acc.zip(sample.toList).map {
-            case (c, '0') => c - 1
-            case (c, _) => c + 1
-          }
+  def puzzle1(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (duration, value) = Time.timing {
+      val bits = data.diagnostics.foldLeft[List[Int]]("000000000000".toList.map(_ => 0)) { (acc, sample) =>
+        acc.zip(sample.toList).map {
+          case (c, '0') => c - 1
+          case (c, _) => c + 1
         }
-
-        val gamma = Integer.parseInt(new String(bits.map({
-          case v if v > 0 => '1'
-          case _ => '0'
-        }).toArray), 2)
-
-        val epsilon = Integer.parseInt(new String(bits.map({
-          case v if v > 0 => '0'
-          case _ => '1'
-        }).toArray), 2)
-
-        val power = gamma * epsilon
-        power
       }
 
-      logger.info(s"${name} Puzzle 1 => ${value} (${duration})")
+      val gamma = Integer.parseInt(new String(bits.map({
+        case v if v > 0 => '1'
+        case _ => '0'
+      }).toArray), 2)
 
-      value
+      val epsilon = Integer.parseInt(new String(bits.map({
+        case v if v > 0 => '0'
+        case _ => '1'
+      }).toArray), 2)
+
+      val power = gamma * epsilon
+      power
     }
+
+    logger.info(s"${name} Puzzle 1 => ${value} (${Time.prettyDuration(duration)})")
+
+    value
   }
 
-  object puzzle2 {
-    def run(): Int = {
-      val (duration, value) = Time.timing {
+  def puzzle2(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (duration, value) = Time.timing {
 
-        val o2 = {
-          var remaining = data.diagnostics
-          for (i <- 0 until 12) {
-            if (remaining.length > 1) {
-              val (a, b) = remaining.partition(_(i) == '1')
-              remaining = if (a.length >= b.length) a else b
-            }
+      val o2 = {
+        var remaining = data.diagnostics
+        for (i <- 0 until 12) {
+          if (remaining.length > 1) {
+            val (a, b) = remaining.partition(_(i) == '1')
+            remaining = if (a.length >= b.length) a else b
           }
-          Integer.parseInt(remaining.head, 2)
         }
-
-        val co2 = {
-          var remaining = data.diagnostics
-          for (i <- 0 until 12) {
-            if (remaining.length > 1) {
-              val (a, b) = remaining.partition(_(i) == '0')
-              remaining = if (a.length <= b.length) a else b
-            }
-          }
-          Integer.parseInt(remaining.head, 2)
-        }
-
-        val lifeSupport = o2 * co2
-        lifeSupport
+        Integer.parseInt(remaining.head, 2)
       }
 
+      val co2 = {
+        var remaining = data.diagnostics
+        for (i <- 0 until 12) {
+          if (remaining.length > 1) {
+            val (a, b) = remaining.partition(_(i) == '0')
+            remaining = if (a.length <= b.length) a else b
+          }
+        }
+        Integer.parseInt(remaining.head, 2)
+      }
 
-      logger.info(s"${name} Puzzle 2 => ${value} (${duration})")
-
-      value
+      val lifeSupport = o2 * co2
+      lifeSupport
     }
+
+    logger.info(s"${name} Puzzle 2 => ${value} (${Time.prettyDuration(duration)})")
+
+    value
   }
 
   object data {
