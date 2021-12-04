@@ -1,54 +1,38 @@
 package com.buzuli.advent.days
 
-import com.buzuli.advent.{AdventContext, AdventDay, DayResult}
-import com.buzuli.util.Time
+import com.buzuli.advent.{AdventContext, AdventDay}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 object day2 extends AdventDay(2) {
-  override def _execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
-    val r1 = puzzle1
-    val r2 = puzzle2
-    for {
-      p1 <- r1
-      p2 <- r2
-    } yield success(s"""Puzzle1 => ${p1} | Puzzle2 => ${p2}""")
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
+    List(puzzle1, puzzle2)
   }
 
-  def puzzle1(implicit ec: ExecutionContext): Future[Int] = Future {
-    val (duration, value) = Time.timing {
-      val (depth, distance) = data.commands.foldLeft((0, 0)) { (acc, command) =>
-        val (depth, distance) = acc
-        command match {
-          case s"up ${value}" => (depth - value.toInt, distance)
-          case s"down ${value}" => (depth + value.toInt, distance)
-          case s"forward ${value}" => (depth, distance + value.toInt)
-        }
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (depth, distance) = data.commands.foldLeft((0, 0)) { (acc, command) =>
+      val (depth, distance) = acc
+      command match {
+        case s"up ${value}" => (depth - value.toInt, distance)
+        case s"down ${value}" => (depth + value.toInt, distance)
+        case s"forward ${value}" => (depth, distance + value.toInt)
       }
-      depth * distance
     }
 
-    logger.info(s"${name} Puzzle 1 => ${value} (${Time.prettyDuration(duration)})")
-
-    value
+    depth * distance
   }
 
-  def puzzle2(implicit ec: ExecutionContext): Future[Int] = Future {
-    val (duration, value) = Time.timing {
-      val (depth, _, distance) = data.commands.foldLeft((0, 0, 0)) { (acc, command) =>
-        val (depth, aim, distance) = acc
-        command match {
-          case s"up ${value}" => (depth, aim - value.toInt, distance)
-          case s"down ${value}" => (depth, aim + value.toInt, distance)
-          case s"forward ${value}" => (depth + aim * value.toInt, aim, distance + value.toInt)
-        }
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+    val (depth, _, distance) = data.commands.foldLeft((0, 0, 0)) { (acc, command) =>
+      val (depth, aim, distance) = acc
+      command match {
+        case s"up ${value}" => (depth, aim - value.toInt, distance)
+        case s"down ${value}" => (depth, aim + value.toInt, distance)
+        case s"forward ${value}" => (depth + aim * value.toInt, aim, distance + value.toInt)
       }
-      depth * distance
     }
 
-    logger.info(s"${name} Puzzle 2 => ${value} (${Time.prettyDuration(duration)})")
-
-    value
+    depth * distance
   }
 
   object data {
