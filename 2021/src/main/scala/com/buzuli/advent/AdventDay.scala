@@ -29,10 +29,18 @@ case class DayResult(
   duration: Duration
 ) {
   def outcome: String = {
-    if (!puzzles.exists(_.result.isFailure)) "SUCCEEDED" else "FAILED"
+    if (puzzles.isEmpty || puzzles.exists(_.result.isFailure))
+      "FAILED"
+    else
+      "SUCCEEDED"
   }
 
-  def summary: String = puzzles.map(_.toString).mkString(" | ")
+  def summary: String = {
+    if (puzzles.isEmpty)
+      "No puzzles."
+    else
+      puzzles.map(_.toString).mkString(" | ")
+  }
 
   override def toString: String = {
     val durationString = Time.prettyDuration(duration)
