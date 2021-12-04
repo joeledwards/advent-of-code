@@ -25,17 +25,13 @@ object day4 extends AdventDay(4) {
 
       data.selections.takeWhile { value =>
         boards.takeWhile { board =>
-          if (board.mark(value)) {
-            result = Some({
-              board.map.keys.sum * value
-            })
-          }
+          result = board.mark(value)
           result.isEmpty
         }
         result.isEmpty
       }
 
-      result.get
+      result.getOrElse(0)
     }
 
     logger.info(s"${name} Puzzle 1 => ${value} (${Time.prettyDuration(duration)})")
@@ -50,19 +46,18 @@ object day4 extends AdventDay(4) {
 
       data.selections.takeWhile { value =>
         boards = boards.filter { board =>
-          if (board.mark(value)) {
-            result = Some({
-              board.map.keys.sum * value
-            })
-            false
-          } else {
-            true
+          board.mark(value) match {
+            case None => true
+            case Some(score) => {
+              result = Some(score)
+              false
+            }
           }
         }
         boards.nonEmpty
       }
 
-      result.get
+      result.getOrElse(0)
     }
 
     logger.info(s"${name} Puzzle 2 => ${value} (${Time.prettyDuration(duration)})")
@@ -79,25 +74,31 @@ object day4 extends AdventDay(4) {
     case class Board(
       boardText: String,
     ) {
-      val array: Array[Array[Int]] = {
+      val matrix: List[List[Int]] = {
         boardText
           .split("\n")
+          .view
           .map(_.trim)
           .filter(_.nonEmpty)
-          .map { value =>
-            value
+          .map { line =>
+            line
               .split(" ")
+              .view
               .map(_.trim)
               .filter(_.nonEmpty)
               .map(_.toInt)
-          }
+              .toList
+          }.toList
       }
 
+      val width: Int = matrix.length
+      val height: Int = matrix.head.length
+
       // Map the value back to the coordinates
-      val map: mutable.Map[Int, (Int, Int)] = {
+      val valueToCoordinateMap: mutable.Map[Int, (Int, Int)] = {
         mutable.Map.from(
-          array.toList.zipWithIndex.flatMap({ case (subArray, y) =>
-            subArray.toList.zipWithIndex.map({ case (value, x) =>
+          matrix.zipWithIndex.flatMap({ case (subList, y) =>
+            subList.zipWithIndex.map({ case (value, x) =>
               (value, (x, y))
             })
           })
@@ -107,22 +108,26 @@ object day4 extends AdventDay(4) {
       var colCounts: mutable.Map[Int, Int] = mutable.Map()
       var rowCounts: mutable.Map[Int, Int] = mutable.Map()
 
-      def mark(value: Int): Boolean = {
-        map.get(value) match {
-          case None => false
-          case Some((x, y)) => {
-            map.remove(value)
+      /**
+       * Mark the position on the board, indicating a bingo by returning the score.
+       *
+       * @param value the value to mark
+       *
+       * @return Some(score) if marking this value resulted in a bingo
+       */
+      def mark(value: Int): Option[Int] = {
+        valueToCoordinateMap.remove(value) flatMap { case (x, y) =>
+          val xBingo = colCounts
+            .updateWith(x)(_.orElse(Some(0)).map(_+1))
+            .exists(_ >= width)
 
-            {
-              val c = colCounts.getOrElse(x, 0)
-              colCounts.put(x, c + 1)
-              c >= 4
-            } || {
-              val c = rowCounts.getOrElse(y, 0)
-              rowCounts.put(y, c + 1)
-              c >= 4
-            }
-          }
+          val yBingo = rowCounts
+            .updateWith(y)(_.orElse(Some(0)).map(_+1))
+            .exists(_ >= height)
+
+          val bingo = xBingo || yBingo
+
+          Option.when(bingo)(valueToCoordinateMap.keys.sum * value)
         }
       }
     }
