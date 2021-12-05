@@ -46,7 +46,7 @@ object Main extends App with LazyLogging {
           Scheduler.shutdown()
         }
       },
-      5.seconds
+      1.minute
     )
   } match {
     case Success(context) => {
