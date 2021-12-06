@@ -5,21 +5,21 @@ import com.buzuli.advent.{AdventContext, AdventDay}
 import scala.concurrent.{ExecutionContext, Future}
 
 object day1 extends AdventDay(1) {
-  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
     List(puzzle1, puzzle2)
   }
 
-  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (increases, _) = data.soundings.foldLeft[(Int, Option[Int])]((0, None)) { (acc, sounding) =>
       acc match {
         case (increases, Some(lastSounding)) if sounding > lastSounding => (increases + 1, Some(sounding))
         case (increases, _) => (increases, Some(sounding))
       }
     }
-    increases
+    increases.toString
   }
 
-  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (increases, _) = data.soundings.foldLeft[(Int, List[Int])]((0, Nil)) { (acc, sounding) =>
       acc match {
         case (increases, a :: b :: c :: Nil) => {
@@ -33,7 +33,7 @@ object day1 extends AdventDay(1) {
         }
       }
     }
-    increases
+    increases.toString
   }
 
   object data {

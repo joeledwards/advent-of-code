@@ -1,17 +1,17 @@
 package com.buzuli.advent.days
 
-import com.buzuli.advent.{AdventContext, AdventDay, DayResult}
-import com.buzuli.util.Time
+import com.buzuli.advent.{AdventContext, AdventDay}
 
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 object day5 extends AdventDay(5) {
-  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
-    List(puzzle1, puzzle2)
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
+    //List(puzzle1, puzzle2)
+    List()
   }
 
-  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     // Sparse matrix mapping the overlap counts
     val matrix: mutable.Map[Coord, Int] = mutable.HashMap()
 
@@ -21,10 +21,10 @@ object day5 extends AdventDay(5) {
       }
     }
 
-    matrix.values.count(_ > 1)
+    matrix.values.count(_ > 1).toString
   }
 
-  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val matrix: mutable.Map[Coord, Int] = mutable.HashMap()
 
     for (segment <- data.segments) {
@@ -33,7 +33,7 @@ object day5 extends AdventDay(5) {
       }
     }
 
-    matrix.values.count(_ > 1)
+    matrix.values.count(_ > 1).toString
   }
 
   case class Coord(x: Int, y: Int)

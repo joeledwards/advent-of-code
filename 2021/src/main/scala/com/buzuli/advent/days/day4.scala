@@ -6,11 +6,11 @@ import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
 object day4 extends AdventDay(4) {
-  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
     List(puzzle1, puzzle2)
   }
 
-  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val boards = data.boards
     var result: Option[Int] = None
 
@@ -22,10 +22,10 @@ object day4 extends AdventDay(4) {
       result.isEmpty
     }
 
-    result.getOrElse(0)
+    result.getOrElse(0).toString
   }
 
-  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     var result: Option[Int] = None
     var boards = data.boards
 
@@ -42,7 +42,7 @@ object day4 extends AdventDay(4) {
       boards.nonEmpty
     }
 
-    result.getOrElse(0)
+    result.getOrElse(0).toString
   }
 
   object data {

@@ -5,11 +5,11 @@ import com.buzuli.advent.{AdventContext, AdventDay}
 import scala.concurrent.{ExecutionContext, Future}
 
 object day2 extends AdventDay(2) {
-  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
     List(puzzle1, puzzle2)
   }
 
-  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (depth, distance) = data.commands.foldLeft((0, 0)) { (acc, command) =>
       val (depth, distance) = acc
       command match {
@@ -19,10 +19,10 @@ object day2 extends AdventDay(2) {
       }
     }
 
-    depth * distance
+    (depth * distance).toString
   }
 
-  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (depth, _, distance) = data.commands.foldLeft((0, 0, 0)) { (acc, command) =>
       val (depth, aim, distance) = acc
       command match {
@@ -32,7 +32,7 @@ object day2 extends AdventDay(2) {
       }
     }
 
-    depth * distance
+    (depth * distance).toString
   }
 
   object data {

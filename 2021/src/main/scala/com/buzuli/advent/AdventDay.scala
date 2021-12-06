@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
 case class PuzzleResult(
   day: AdventDay,
   number: Int,
-  result: Try[Int],
+  result: Try[String],
   duration: Duration
 ) {
   override def toString: String = {
@@ -51,7 +51,7 @@ case class DayResult(
 abstract class AdventDay(
   val day: Int
 ) extends LazyLogging {
-  def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]]
+  def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]]
 
   final def execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
     val start = Time.now

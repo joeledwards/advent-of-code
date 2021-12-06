@@ -5,11 +5,11 @@ import com.buzuli.advent.{AdventContext, AdventDay}
 import scala.concurrent.{ExecutionContext, Future}
 
 object day3 extends AdventDay(3) {
-  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[Int]] = {
+  override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
     List(puzzle1, puzzle2)
   }
 
-  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val bits = data.diagnostics.foldLeft[List[Int]]("000000000000".toList.map(_ => 0)) { (acc, sample) =>
       acc.zip(sample.toList).map {
         case (c, '0') => c - 1
@@ -28,10 +28,10 @@ object day3 extends AdventDay(3) {
     }).toArray), 2)
 
     val power = gamma * epsilon
-    power
+    power.toString
   }
 
-  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[Int] = Future {
+  def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val o2 = {
       var remaining = data.diagnostics
       for (i <- 0 until 12) {
@@ -55,7 +55,7 @@ object day3 extends AdventDay(3) {
     }
 
     val lifeSupport = o2 * co2
-    lifeSupport
+    lifeSupport.toString
   }
 
   object data {
