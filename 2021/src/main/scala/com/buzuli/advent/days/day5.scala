@@ -7,33 +7,42 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object day5 extends AdventDay(5) {
   override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
-    //List(puzzle1, puzzle2)
     List()
+    //List(puzzle1, puzzle2)
   }
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    // Sparse matrix mapping the overlap counts
-    val matrix: mutable.Map[Coord, Int] = mutable.HashMap()
-
-    for (segment <- data.segments.filter(!_.diagonal)) {
-      for (coord <- segment.range) {
-        matrix.updateWith(coord)(_.orElse(Some(0)).map(_ + 1))
-      }
-    }
-
-    matrix.values.count(_ > 1).toString
+    solveWithSparseMatrix(false).toString
   }
 
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
+    solveWithSparseMatrix(true).toString
+  }
+
+  def solveWithGrid(includeDiagonals: Boolean): Int = {
+    /*
+    val xMin = data.segments.map(_.)
+    val xMax = data.segments.map()
+    val xRange = Range(xMin, xMax)
+    */
+    0
+  }
+
+  def solveWithSparseMatrix(includeDiagonals: Boolean): Int = {
     val matrix: mutable.Map[Coord, Int] = mutable.HashMap()
 
-    for (segment <- data.segments) {
+    val filter: Segment => Boolean = includeDiagonals match {
+      case true => (s: Segment) => true
+      case false => (s: Segment) => s.diagonal
+    }
+
+    for (segment <- data.segments.filter(filter)) {
       for (coord <- segment.range) {
         matrix.updateWith(coord)(_.orElse(Some(0)).map(_ + 1))
       }
     }
 
-    matrix.values.count(_ > 1).toString
+    matrix.values.count(_ > 1)
   }
 
   case class Coord(x: Int, y: Int)
@@ -84,7 +93,7 @@ object day5 extends AdventDay(5) {
   }
 
   object data {
-    val segments: List[Segment] = {
+    def segments: List[Segment] = {
       raw
         .split("\n")
         .view

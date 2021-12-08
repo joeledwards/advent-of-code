@@ -2,6 +2,7 @@ package com.buzuli.advent.days
 
 import com.buzuli.advent.{AdventContext, AdventDay}
 
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
@@ -13,14 +14,14 @@ object day7 extends AdventDay(7) {
   }
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    val (position, fuel) = resolveFuel(false)(data.crabs)
+    val (position, fuel) = resolveFuel(false, data.crabs)
     logger.info(s"position=${position} fuel=${fuel}")
 
     fuel.toString
   }
 
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    val (position, fuel) = resolveFuel(true)(data.crabs)
+    val (position, fuel) = resolveFuel(true, data.crabs)
     logger.info(s"position=${position} fuel=${fuel}")
 
     fuel.toString
@@ -40,7 +41,15 @@ object day7 extends AdventDay(7) {
     }).sum
   }
 
-  def resolveFuel(additive: Boolean)(crabs: List[Int]): (Int, Int) = {
+  def split(clusters: List[(Int, Int)]): (List[(Int, Int)], List[(Int, Int)]) = {
+    clusters match {
+      case Nil => (Nil, Nil)
+      case item :: Nil => (List(item), Nil)
+      case items => items.splitAt(items.length / 2)
+    }
+  }
+
+  def resolveFuel(additive: Boolean, crabs: List[Int]): (Int, Int) = {
     val calculateFuel: (Int, List[(Int, Int)]) => Int = {
       if (additive) fuelAdditive else fuelConstant
     }
