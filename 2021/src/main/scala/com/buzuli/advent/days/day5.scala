@@ -7,8 +7,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object day5 extends AdventDay(5) {
   override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
-    List()
-    //List(puzzle1, puzzle2)
+    List(puzzle1, puzzle2)
   }
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
@@ -19,24 +18,17 @@ object day5 extends AdventDay(5) {
     solveWithSparseMatrix(true).toString
   }
 
-  def solveWithGrid(includeDiagonals: Boolean): Int = {
-    /*
-    val xMin = data.segments.map(_.)
-    val xMax = data.segments.map()
-    val xRange = Range(xMin, xMax)
-    */
-    0
-  }
-
   def solveWithSparseMatrix(includeDiagonals: Boolean): Int = {
     val matrix: mutable.Map[Coord, Int] = mutable.HashMap()
 
     val filter: Segment => Boolean = includeDiagonals match {
-      case true => (s: Segment) => true
-      case false => (s: Segment) => s.diagonal
+      case true => _ => true
+      case false => _.diagonal
     }
 
-    for (segment <- data.segments.filter(filter)) {
+    val segments = data.segments.filter(filter)
+
+    for (segment <- segments) {
       for (coord <- segment.range) {
         matrix.updateWith(coord)(_.orElse(Some(0)).map(_ + 1))
       }
@@ -50,7 +42,7 @@ object day5 extends AdventDay(5) {
   case class Segment(
     segmentText: String
   ) {
-    val (start: Coord, end: Coord) = {
+    lazy val (start: Coord, end: Coord) = {
       segmentText match {
         case s"${sx},${sy} -> ${ex},${ey}" => {
           (
@@ -63,8 +55,8 @@ object day5 extends AdventDay(5) {
 
     override def toString: String = segmentText
 
-    val diagonal: Boolean = (start.x != end.x) && (start.y != end.y)
-    val range: List[Coord] = {
+    lazy val diagonal: Boolean = (start.x != end.x) && (start.y != end.y)
+    lazy val range: List[Coord] = {
       val xLen = Math.abs(start.x - end.x) + 1
       val yLen = Math.abs(start.y - end.y) + 1
 

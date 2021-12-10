@@ -28,7 +28,6 @@ object day8 extends AdventDay(8) {
 
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val total = data.messages.map(_.decodedValue).sum.toString
-    logger.info(s"${total}")
     total
   }
 
@@ -91,8 +90,6 @@ object day8 extends AdventDay(8) {
           case _ => decodeMap(o)
         }
       }).mkString
-
-      logger.info(s"${decoded}")
 
       decoded.toInt
     }

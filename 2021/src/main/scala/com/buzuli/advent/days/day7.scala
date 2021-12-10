@@ -15,14 +15,12 @@ object day7 extends AdventDay(7) {
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (position, fuel) = resolveFuel(false, data.crabs)
-    logger.info(s"position=${position} fuel=${fuel}")
 
     fuel.toString
   }
 
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
     val (position, fuel) = resolveFuel(true, data.crabs)
-    logger.info(s"position=${position} fuel=${fuel}")
 
     fuel.toString
   }
@@ -79,12 +77,6 @@ object day7 extends AdventDay(7) {
           .map({ old => if (old._2 < fuel) old else (position, fuel) })
           .orElse(Some((position, fuel)))
       }
-    }
-
-    logger.info(s"min=${min} max=${max}")
-
-    minimum.foreach { case (position, fuel) =>
-      logger.info(s"position=${position} fuel=${fuel}")
     }
 
     minimum.get

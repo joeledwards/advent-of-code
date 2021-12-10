@@ -54,29 +54,29 @@ abstract class AdventDay(
   def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]]
 
   final def execute(context: AdventContext)(implicit ec: ExecutionContext): Future[DayResult] = {
-    val start = Time.now
+    Time.asyncTiming {
+      Future.sequence {
+        val start = Time.nowNanos
 
-    Future.sequence {
-      val start = Time.now
+        puzzles.zipWithIndex map { case (puzzle, index) =>
+          val number = index + 1
 
-      puzzles.zipWithIndex map { case (puzzle, index) =>
-        val duration = Time.since(start)
-        val number = index + 1
+          puzzle(context) transform { outcome =>
+            val puzzleDuration = Time.sinceNanos(start)
+            val result = Success(PuzzleResult(this, number, outcome, puzzleDuration))
+            val message = s"${name} Puzzle ${number} => ${result} (${Time.prettyDuration(puzzleDuration)})"
 
-        puzzle(context) transform { outcome =>
-          val result = Success(PuzzleResult(this, number, outcome, duration))
-          val message = s"${name} Puzzle ${number} => ${result} (${Time.prettyDuration(duration)})"
+            outcome match {
+              case Success(_) => logger.info(message)
+              case Failure(reason) => logger.error(message, reason)
+            }
 
-          outcome match {
-            case Success(_) => logger.info(message)
-            case Failure(reason) => logger.error(message, reason)
+            result
           }
-
-          result
         }
       }
-    } map { puzzleResults =>
-      DayResult(this, puzzleResults, Time.since(start))
+    } map { case (dayDuration, puzzleResults) =>
+      DayResult(this, puzzleResults, dayDuration)
     }
   }
 

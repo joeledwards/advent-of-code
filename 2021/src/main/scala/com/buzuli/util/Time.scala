@@ -3,7 +3,7 @@ package com.buzuli.util
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, DurationLong}
 import scala.util.Try
 
 object Time {
@@ -22,6 +22,11 @@ object Time {
       TimeUnit.MILLISECONDS
     )
   }
+
+  def nowNanos: Long = System.nanoTime
+  def sinceNanos(whence: Long, timeSource: => Long = nowNanos): Duration = diffNanos(whence, timeSource)
+  def diffNanos(start: Long, end: Long): Duration = (end - start).nanos
+
   def thousandths(value: Number): String = s"${(value.intValue() % 1000) + 1000}".slice(1, 4)
   def prettyDuration(duration: Duration): String = duration.toNanos match {
     case nanos if nanos >= NANOS_PER_DAY  => s"${nanos / NANOS_PER_DAY}d ${nanos / NANOS_PER_HOUR % 24}h"
@@ -33,20 +38,22 @@ object Time {
   }
 
   def timing[T](action: => T): (Duration, T) = {
-    val start = now
+    val start = System.nanoTime
     val result: T = action
-    val duration = since(start)
+    val end = System.nanoTime
+    val duration = (end - start).millis
     (duration, result)
   }
 
   def safeTiming[T](action: => T): Try[(Duration, T)] = Try(timing(action))
 
   def asyncTiming[T](action: => Future[T])(implicit ec: ExecutionContext): Future[(Duration, T)] = {
-    val start = now
+    val start = System.nanoTime
     Future.unit flatMap { _ =>
       action
     } map { result =>
-      val duration = since(start)
+      val end = System.nanoTime
+      val duration = (end - start).nanos
       (duration, result)
     }
   }
