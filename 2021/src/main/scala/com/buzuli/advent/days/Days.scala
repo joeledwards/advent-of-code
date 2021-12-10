@@ -9,13 +9,15 @@ import scala.concurrent.{ExecutionContext, Future}
 object Days extends LazyLogging {
   val dayList: List[AdventDay] = List(
     day1, day2, day3, day4, day5,
-    day6, day7, day8,
+    day6, day7, day8, day9,
   )
 
-  def execute(context: AdventContext)(implicit ec: ExecutionContext): Future[List[DayResult]] = {
+  def execute(
+    context: AdventContext, dayFilter: AdventDay => Boolean
+  )(implicit ec: ExecutionContext): Future[List[DayResult]] = {
     context.concurrency match {
       case AdventSerial => {
-        dayList.foldLeft[Future[List[DayResult]]](
+        dayList.filter(dayFilter).foldLeft[Future[List[DayResult]]](
           Future.successful(Nil)
         ) { (previousDayFuture, nextDay) =>
           previousDayFuture.flatMap { outcomes =>
@@ -29,7 +31,7 @@ object Days extends LazyLogging {
       }
       case AdventConcurrent(concurrency) => {
         Async.concurrently(concurrency) {
-          dayList map { day =>
+          dayList filter { dayFilter } map { day =>
             new AsyncTask[DayResult] {
               override def execute(): Future[DayResult] = {
                 Future.unit flatMap { _ =>
