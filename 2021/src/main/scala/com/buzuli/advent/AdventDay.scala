@@ -1,8 +1,9 @@
 package com.buzuli.advent
 
-import com.buzuli.util.{Async, Time}
+import com.buzuli.util.{FileSystem, Time}
 import com.typesafe.scalalogging.LazyLogging
 
+import java.io.File
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -83,4 +84,21 @@ abstract class AdventDay(
   def name: String = s"Day ${day}"
 
   override def toString: String = name
+
+  lazy val _lines: List[String] = {
+    val DayFileName = "^(?:.*[^0-9])?([0]*[0-9]+)(?:[^0-9].*)?$".r
+    val allDataFiles = FileSystem.dataFiles
+    val fileName = allDataFiles.map(f => (f, f.getName)).collectFirst {
+      case (f, DayFileName(d)) if d.toInt == day => {
+        val file = f.getCanonicalPath
+        file
+      }
+    }
+    if (fileName.isEmpty) {
+      throw new Exception(s"No input found for ${name}")
+    }
+    fileName.map(FileSystem.readFileLines).getOrElse(Nil)
+  }
+
+  def lines: List[String] = _lines
 }

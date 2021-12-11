@@ -21,8 +21,7 @@ object day6 extends AdventDay(6) {
   def generation(numGenerations: Int): Long = {
     var fishMap: mutable.Map[Int, Long] = {
       val map = mutable.Map[Int, Long]()
-      data
-        .fish
+      fish
         .groupBy(x => x)
         .foreach { case (k, l) =>
           map.put(k, l.count(_ => true))
@@ -47,21 +46,13 @@ object day6 extends AdventDay(6) {
     fishMap.values.sum
   }
 
-  object data {
-    val fish: List[Int] = {
-      raw
-        .split("\n")
-        .view
-        .map(_.trim)
-        .filter(_.nonEmpty)
-        .flatMap(_.split(","))
-        .map(_.toInt)
-        .toList
-    }
-
-    lazy val raw: String =
-      """
-        |1,1,1,1,2,1,1,4,1,4,3,1,1,1,1,1,1,1,1,4,1,3,1,1,1,5,1,3,1,4,1,2,1,1,5,1,1,1,1,1,1,1,1,1,1,3,4,1,5,1,1,1,1,1,1,1,1,1,3,1,4,1,1,1,1,3,5,1,1,2,1,1,1,1,4,4,1,1,1,4,1,1,4,2,4,4,5,1,1,1,1,2,3,1,1,4,1,5,1,1,1,3,1,1,1,1,5,5,1,2,2,2,2,1,1,2,1,1,1,1,1,3,1,1,1,2,3,1,5,1,1,1,2,2,1,1,1,1,1,3,2,1,1,1,4,3,1,1,4,1,5,4,1,4,1,1,1,1,1,1,1,1,1,1,2,2,4,5,1,1,1,1,5,4,1,3,1,1,1,1,4,3,3,3,1,2,3,1,1,1,1,1,1,1,1,2,1,1,1,5,1,3,1,4,3,1,3,1,5,1,1,1,1,3,1,5,1,2,4,1,1,4,1,4,4,2,1,2,1,3,3,1,4,4,1,1,3,4,1,1,1,2,5,2,5,1,1,1,4,1,1,1,1,1,1,3,1,5,1,2,1,1,1,1,1,4,4,1,1,1,5,1,1,5,1,2,1,5,1,1,1,1,1,1,1,1,1,1,1,1,3,2,4,1,1,2,1,1,3,2
-        |""".stripMargin
+  val fish: List[Int] = {
+    lines
+      .view
+      .map(_.trim)
+      .filter(_.nonEmpty)
+      .flatMap(_.split(","))
+      .map(_.toInt)
+      .toList
   }
 }
