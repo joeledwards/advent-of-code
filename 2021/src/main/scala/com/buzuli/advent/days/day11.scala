@@ -2,10 +2,8 @@ package com.buzuli.advent.days
 
 import com.buzuli.advent.{AdventContext, AdventDay}
 
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Try
 
 object day11 extends AdventDay(11) {
   override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
@@ -13,7 +11,6 @@ object day11 extends AdventDay(11) {
   }
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    // Sample flashes after 100 steps => 1656
     val (score, _) = calculateStepFlashes(100)
     score.toString
   }
@@ -24,6 +21,8 @@ object day11 extends AdventDay(11) {
   }
 
   def calculateStepFlashes(stepsToCount: Int): (Int, Option[Int]) = {
+    // The map where we can lookup an octopus by its coordinates
+    // (needed in order to fetch neighboring octopi)
     val all: Map[(Int, Int), Octopus] = {
       newGrid.toList.zipWithIndex.flatMap({ case (rows, y) =>
         rows.toList.zipWithIndex.map({ case (v, x) =>
@@ -32,13 +31,11 @@ object day11 extends AdventDay(11) {
       }).toMap
     }
 
+    // Increment the power for all octopi in the set, then return all
+    // which reached at the flash threshold.
     def incrementAndCollect(octopi: Set[Octopus]): Set[Octopus] = {
       octopi.map({ o =>
-        if (o.increment()) {
-          Some(o)
-        } else {
-          None
-        }
+        Option.when(o.increment())(o)
       }) collect {
         case Some(Octopus(x, y, _)) => all((x, y))
       }
@@ -49,11 +46,12 @@ object day11 extends AdventDay(11) {
     var syncStep: Option[Int] = None
 
     while (syncStep.isEmpty || step <= stepsToCount) { // steps
-      // Increment values and identify flashers
+      // Increment values and identify initial flashers
       var flashers = incrementAndCollect(all.values.toSet)
       var stepFlashes = 0
 
-      // Apply flashes while there are more that need to emit a flash
+      // Apply flashes, then increment those adjacent to the flashers, and any
+      // which met their flash threshold become part of the next set of flashers
       while (flashers.nonEmpty) {
         flashers = flashers.flatMap { o =>
           stepFlashes += 1
@@ -64,10 +62,12 @@ object day11 extends AdventDay(11) {
       // Reset any which flashed
       all.values.foreach(_.reset())
 
+      // Record the first case where all octopi flashed during the same step
       if (stepFlashes == 100 && syncStep.isEmpty) {
         syncStep = Some(step)
       }
 
+      // Save the score (flash count) if we reached the number of target steps
       if (step == stepsToCount) {
         score = all.values.map(_.flashCount).sum
       }
@@ -81,22 +81,22 @@ object day11 extends AdventDay(11) {
   case class Octopus(
     x: Int,
     y: Int,
-    v: Int
+    initialPower: Int
   ) {
-    var value: Int = v
+    var power: Int = initialPower
     var flashCount: Int = 0
 
     /**
-     * Reset the value and whether it flashed.
+     * Reset the power if the octopus flashed.
      */
     def reset(): Unit = {
-      if (value > 9) {
-        value = 0
+      if (power > 9) {
+        power = 0
       }
     }
 
     /**
-     * Indicate which
+     * Supply all neighboring octopi.
      */
     def flash(): Set[(Int, Int)] = {
       flashCount += 1
@@ -122,8 +122,8 @@ object day11 extends AdventDay(11) {
      * Increment the internal value, and indicate whether a flash should be emitted.
      */
     def increment(): Boolean = {
-      value += 1
-      value == 10
+      power += 1
+      power == 10
     }
   }
 
