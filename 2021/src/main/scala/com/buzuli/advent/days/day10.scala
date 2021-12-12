@@ -2,7 +2,6 @@ package com.buzuli.advent.days
 
 import com.buzuli.advent.{AdventContext, AdventDay}
 
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
@@ -10,11 +9,6 @@ object day10 extends AdventDay(10) {
   override def puzzles(implicit ec: ExecutionContext): List[AdventContext => Future[String]] = {
     List(puzzle1, puzzle2)
   }
-
-  sealed trait ParseResult
-  case class ParseSuccess(score: Int) extends ParseResult
-  case object ParseInvalid extends ParseResult
-  case object ParseIncomplete extends ParseResult
 
   def closing(c: Char): Char = c match {
     case '(' => ')'
@@ -37,25 +31,23 @@ object day10 extends AdventDay(10) {
       var stack: List[Char] = Nil
 
       line.toList.foldLeft[Option[Int]](None) { case (acc, c) =>
-        acc.orElse {
-          c match {
-            case '(' | '[' | '{' | '<' => {
-              stack = closing(c) :: stack
-              None
-            }
-            case ')' | ']' | '}' | '>' => {
-              val head = stack.head
-              stack = stack.tail
-              if (c == head) {
-                None
-              } else {
-                val score = points(c)
-                Some(score)
-              }
-            }
-            case _ => throw new Exception(s"Invalid character '${c}''")
+        acc.orElse { c match {
+          case '(' | '[' | '{' | '<' => {
+            stack = closing(c) :: stack
+            None
           }
-        }
+          case ')' | ']' | '}' | '>' => {
+            val head = stack.head
+            stack = stack.tail
+            if (c == head) {
+              None
+            } else {
+              val score = points(c)
+              Some(score)
+            }
+          }
+          case _ => throw new Exception(s"Invalid character '${c}''")
+        } }
       } orElse { Some(0) }
     }
 
@@ -120,7 +112,7 @@ object day10 extends AdventDay(10) {
       .toList
   }
 
-  lazy val sample: String = {
+  lazy val sample: List[String] = {
     """
       |[({(<(())[]>[[{[]{<()<>>
       |[(()[<>])]({[<{<<[]>>(
@@ -132,6 +124,6 @@ object day10 extends AdventDay(10) {
       |[<(<(<(<{}))><([]([]()
       |<{([([[(<>()){}]>(<<{{
       |<{([{{}}[<[[[<>{}]]]>[]]
-      |""".stripMargin
+      |""".stripMargin.split("\n").toList
   }
 }

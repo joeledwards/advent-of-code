@@ -91,7 +91,7 @@ object day5 extends AdventDay(5) {
       .toList
   }
 
-  lazy val sample: String =
+  lazy val sample: List[String] =
     """
       |0,9 -> 5,9
       |8,0 -> 0,8
@@ -103,5 +103,5 @@ object day5 extends AdventDay(5) {
       |3,4 -> 1,4
       |0,0 -> 8,8
       |5,5 -> 8,2
-      |""".stripMargin
+      |""".stripMargin.split("\n").toList
 }
