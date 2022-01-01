@@ -198,21 +198,24 @@ object Http {
   def shutdown(): Unit = system.terminate()
 }
 
-object TryHttp extends App {
-  val result = Await.result(Http.get("http://rocket:1337/"), Duration(5, TimeUnit.SECONDS))
+object TryHttp {
+  def tryHttp(): Unit = {
+    val result = Await.result(Http.get("http://rocket:1337/"), Duration(5, TimeUnit.SECONDS))
 
-  result match {
-    case HttpResultRawResponse(response, _, _) => {
-      val json = Json.obj(
-        "status" -> response.status.intValue,
-        "headers" -> Json.arr(response.headers.map(h =>
-          h.name -> h.value
-        ))
-      )
-      println(Json.prettyPrint(json))
+    result match {
+      case HttpResultRawResponse(response, _, _) => {
+        val json = Json.obj(
+          "status" -> response.status.intValue,
+          "headers" -> Json.arr(response.headers.map(h =>
+            h.name -> h.value
+          )
+          )
+        )
+        println(Json.prettyPrint(json))
+      }
+      case _ => println(s"Invalid request!")
     }
-    case _ => println(s"Invalid request!")
-  }
 
-  Http.shutdown()
+    Http.shutdown()
+  }
 }

@@ -3,9 +3,13 @@ val projectName = "advent-2021"
 
 name := projectName
 version := "1.0.0"
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.6"
 organization := "com.buzuli"
 organizationName := "Buzuli Bytes"
+
+// Set to false or remove if you want to show stubs as linking errors
+//nativeLinkStubs := true
+//enablePlugins(ScalaNativePlugin)
 
 /*
 lazy val root = (project in file(".")).
@@ -38,6 +42,15 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.2.0"
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.0"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+
+
+// === Dependencies required by scala-native ===
+
+// https://mvnrepository.com/artifact/org.ekrich/sjavatime
+//libraryDependencies += "org.ekrich" % "sjavatime_native0.4_2.13" % "1.1.6"
+
+// === === === === ===
+
 
 // Helpful when testing (recommended by scalatest)
 logBuffered in Test := false
