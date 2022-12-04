@@ -94,7 +94,14 @@ object day2 extends AdventDay(2) {
   object p1 {
     def decode(line: String): Option[(Choice, Choice)] = {
       line match {
-        case s"${a} ${b}" => Choice.of(a).flatMap(a => Choice.of(b).map(b => (a, b)))
+        case s"${opponentChoiceS} ${myChoiceS}" =>
+          Choice
+            .of(opponentChoiceS)
+            .flatMap(opponentChoice =>
+              Choice
+                .of(myChoiceS)
+                .map(myChoice => (opponentChoice, myChoice))
+            )
         case _ => None
       }
     }
@@ -113,7 +120,14 @@ object day2 extends AdventDay(2) {
   object p2 {
     def decode(line: String): Option[(Choice, Choice)] = {
       line match {
-        case s"${ccs} ${os}" => Choice.of(ccs).flatMap(cc => Outcome.of(os).map(o => (cc, o.against(cc))))
+        case s"${opponentChoiceS} ${outcomeS}" =>
+          Choice
+            .of(opponentChoiceS)
+            .flatMap(opponentChoice =>
+              Outcome
+                .of(outcomeS)
+                .map(outcome => (opponentChoice, outcome.against(opponentChoice)))
+            )
         case _ => None
       }
     }
