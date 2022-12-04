@@ -1,5 +1,5 @@
 
-val projectName = "advent-2021"
+val projectName = "advent-2022"
 
 name := projectName
 version := "1.0.0"

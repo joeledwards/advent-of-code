@@ -21,9 +21,9 @@ object Main extends App with LazyLogging {
 
   // Run advent days
   def run(context: AdventContext): Future[AdventContext] = {
-    val dayFilter: AdventDay => Boolean = _ => true
-    //val dayFilter: AdventDay => Boolean = _.day == 1
-    //val dayFilter: AdventDay => Boolean = _.day != 5
+    //val dayFilter: AdventDay => Boolean = _ => true // ALL
+    val dayFilter: AdventDay => Boolean = _.day == 2 // Just this day
+    //val dayFilter: AdventDay => Boolean = _.day != 5 // Remove this day
 
     Days.execute(context, dayFilter) map { results =>
       context.copy(results = results)
