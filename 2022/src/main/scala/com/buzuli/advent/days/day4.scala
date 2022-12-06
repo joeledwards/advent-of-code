@@ -18,7 +18,7 @@ object day4 extends AdventDay(4) {
       ae <- aEnd.toIntOption
       bs <- bStart.toIntOption
       be <- bEnd.toIntOption
-    } yield((SortedSet.from(Range(as, ae + 1)), SortedSet.from(Range(bs, be + 1))))
+    } yield((SortedSet.from(Range.inclusive(as, ae)), SortedSet.from(Range.inclusive(bs, be))))
     
     case _ => None
   }
