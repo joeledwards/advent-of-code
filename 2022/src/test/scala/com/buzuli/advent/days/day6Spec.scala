@@ -4,7 +4,7 @@ import com.buzuli.UnitSpec
 import com.buzuli.advent.days.day6._
 
 class day6Spec extends UnitSpec {
-  "day1.CountingSet" when {
+  "day6.CountingSet" when {
     "adding an item multiple times" should {
       "increase size only when new items are added" in {
         val s = new CountingSet[Int]
