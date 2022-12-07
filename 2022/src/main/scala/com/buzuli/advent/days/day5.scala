@@ -55,53 +55,33 @@ object day5 extends AdventDay(5) {
     )
   }
   
-  object p1 {
-    val finalTopCrates: List[Char] = {
-      val result = moves
-        .foldLeft(stacks)({ (map, move) =>
-          val Move(quantity, from, to) = move
-          val (moved, retained) = {
-            val toSplit = map(from)
-            if (toSplit.length > quantity)
-              toSplit.splitAt(quantity)
-            else
-              (toSplit, Nil)
-          }
-          val updatedMap = map + (from -> retained) + (to -> (moved.reverse ::: map(to)))
-          updatedMap
-        })
-        .toList
-        .sortBy(_._1)
-        .flatMap(_._2.headOption)
+  def finalTopCrates(singleCrateMode: Boolean): List[Char] = {
+    val result = moves
+      .foldLeft(stacks)({ (map, move) =>
+        val Move(quantity, from, to) = move
+        val (moved, retained) = {
+          val toSplit = map(from)
+          if (toSplit.length > quantity)
+            toSplit.splitAt(quantity)
+          else
+            (toSplit, Nil)
+        }
+        val additions = if (singleCrateMode) moved.reverse else moved
+        val updatedMap = map + (from -> retained) + (to -> (additions ::: map(to)))
+        updatedMap
+      })
+      .toList
+      .sortBy(_._1)
+      .flatMap(_._2.headOption)
     
-      result
-    }
+    result
+  }
   
-    def answer: String = s"${finalTopCrates.mkString("")}"
+  object p1 {
+    def answer: String = s"${finalTopCrates(true).mkString("")}"
   }
   
   object p2 {
-    val finalTopCrates: List[Char] = {
-      val result = moves
-        .foldLeft(stacks)({ (map, move) =>
-          val Move(quantity, from, to) = move
-          val (moved, retained) = {
-            val toSplit = map(from)
-            if (toSplit.length > quantity)
-              toSplit.splitAt(quantity)
-            else
-              (toSplit, Nil)
-          }
-          val updatedMap = map + (from -> retained) + (to -> (moved ::: map(to)))
-          updatedMap
-        })
-        .toList
-        .sortBy(_._1)
-        .flatMap(_._2.headOption)
-    
-      result
-    }
-    
-    def answer: String = s"${finalTopCrates.mkString("")}"
+    def answer: String = s"${finalTopCrates(false).mkString("")}"
   }
 }
