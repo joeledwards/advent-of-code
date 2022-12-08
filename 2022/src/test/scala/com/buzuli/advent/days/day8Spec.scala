@@ -37,4 +37,20 @@ class day8Spec extends UnitSpec {
       }
     }
   }
+  
+  "day8.p2.viewFrom" when {
+    "evaluating a view" should {
+      "calculate the correct view distance" in {
+        p2.viewFrom(
+          Tree(0, 0, 5),
+          p2.East,
+          p2.Forest(
+            List(
+              List(5, 3, 2, 5, 7, 2)
+            )
+          )
+        ) shouldBe Some(3)
+      }
+    }
+  }
 }

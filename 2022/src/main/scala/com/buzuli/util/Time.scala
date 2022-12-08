@@ -41,7 +41,7 @@ object Time {
     val start = System.nanoTime
     val result: T = action
     val end = System.nanoTime
-    val duration = (end - start).millis
+    val duration = (end - start).nanos
     (duration, result)
   }
 
