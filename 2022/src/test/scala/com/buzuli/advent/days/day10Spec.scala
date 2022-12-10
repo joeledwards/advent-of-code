@@ -1,10 +1,10 @@
 package com.buzuli.advent.days
 
 import com.buzuli.UnitSpec
-import com.buzuli.advent.days.day9._
+import com.buzuli.advent.days.day10._
 
-class day9Spec extends UnitSpec {
-  "day9._" when {
+class day10Spec extends UnitSpec {
+  "day10._" when {
     "" should {
       "" in {
       }
