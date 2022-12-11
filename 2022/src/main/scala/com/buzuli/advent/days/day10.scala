@@ -16,6 +16,19 @@ object day10 extends AdventDay(10) {
   case object Noop extends Instruction
   case class Addx(value: Long) extends Instruction
   
+  class CPU(onTick: () => Unit) {
+    var register: Long = 1L
+    
+    def exec(instruction: Instruction): Unit = instruction match {
+      case Noop => onTick()
+      case Addx(value) => {
+        onTick()
+        onTick()
+        register += value
+      }
+    }
+  }
+  
   val instructions = lines.flatMap {
     case "noop" => List(Noop)
     case s"addx ${value}" => value.toLongOption.map(Addx).toList
@@ -27,7 +40,7 @@ object day10 extends AdventDay(10) {
     var nextEval: Int = 20
     var signalStrength: Long = 0L
     
-    def step(): Unit = {
+    def onTick(): Unit = {
       cycle += 1
       nextEval -= 1
       if (nextEval == 0) {
@@ -36,50 +49,33 @@ object day10 extends AdventDay(10) {
       }
     }
     
-    instructions.foreach {
-      case Noop => {
-        step()
-      }
-      case Addx(value) => {
-        step()
-        step()
-        register += value
-      }
-    }
+    val cpu: CPU = new CPU(onTick)
+    instructions.foreach(cpu.exec)
     
     def answer: String = s"${signalStrength}"
   }
   
+  case class Coord(var x: Int, var y: Int)
+  
   object p2 {
     val screen: Array[Array[Char]] = Array.fill(6, 40)(' ')
     var register: Long = 1L
-    var x: Int = 0
-    var y: Int = 0
+    var c: Coord = Coord(0, 0)
   
-    def step(): Unit = {
-      screen(y)(x) = (register - x) match {
+    def onTick(): Unit = {
+      screen(c.y)(c.x) = (register - c.x) match {
         case -1 | 0 | 1 => '#'
         case _ => ' '
       }
-      
-      if (x == 39) {
-        x = 0
-        y += 1
-      } else {
-        x += 1
-      }
-    }
   
-    instructions.foreach {
-      case Noop => {
-        step()
-      }
-      case Addx(value) => {
-        step()
-        step()
-        register += value
+      c = c.x match {
+        case 39 => Coord(0, c.y + 1)
+        case _  => Coord(c.x + 1, c.y)
       }
     }
+    
+    val cpu: CPU = new CPU(onTick)
+    instructions.foreach(cpu.exec)
     
     val output = screen.toList.map(_.toList.mkString("")).mkString("\n")
     println(output)
