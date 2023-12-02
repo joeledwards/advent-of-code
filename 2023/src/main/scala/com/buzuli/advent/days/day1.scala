@@ -14,7 +14,7 @@ object day1 extends AdventDay(1) {
   }
   
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    s"${lineSums}"
+    s"${digitOrWordSums}"
   }
 
   def digitSums: Long = digitValues.sum
@@ -22,14 +22,14 @@ object day1 extends AdventDay(1) {
   def digitValues: List[Int] = {
     lines
       .map({ line =>
-        val first = firstDigit(line).map(_._1).getOrElse(0)
-        val last = lastDigit(line).map(_._1).getOrElse(0)
+        val first = firstDigit(line).getOrElse(0)
+        val last = lastDigit(line).getOrElse(0)
 
         first * 10 + last
       })
   }
 
-  def lineSums: Long = {
+  def digitOrWordSums: Long = {
     lines
       .map({ line =>
         val value = lineToValue(line)
@@ -40,13 +40,10 @@ object day1 extends AdventDay(1) {
   }
 
   def lineToValue(line: String): Int = {
-    // Lowest index value is the first
-    val first = (firstDigit(line).toList ::: firstDigitWord(line).toList).minBy(_._2)
+    val first = firstDigitOrWord(line).getOrElse(0)
+    val last = lastDigitOrWord(line).getOrElse(0)
 
-    // Highest index value is the last
-    val last = (lastDigit(line).toList ::: lastDigitWord(line).toList).maxBy(_._2)
-
-    first._1 * 10 + last._1
+    first * 10 + last
   }
 
   def nameToValueMap: Map[String, Int] = Map(
@@ -97,9 +94,8 @@ object day1 extends AdventDay(1) {
   val namePrefixes: Set[String] = nameToValueMap.keySet.toList.flatMap(prefixes).toSet
   val nameSuffixes: Set[String] = nameToValueMap.keySet.toList.flatMap(suffixes).toSet
 
-  def firstDigitWord(text: String): Option[(Int, Int)] = {
+  def firstDigitOrWord(text: String): Option[Int] = {
     var prefix: String = ""
-    var prefixOffset: Option[Int] = None
 
     for (i <- 0 until text.length) {
       val nextChar = text.charAt(i)
@@ -107,7 +103,7 @@ object day1 extends AdventDay(1) {
       if (nextChar.isDigit) {
         // If we encountered a digit, we have not successfully consumed a valid
         // word digit, so we just return this as the first encountered value.
-        return Some((nextChar.getNumericValue, i))
+        return Some(nextChar.getNumericValue)
       } else {
         prefix = s"$prefix$nextChar"
         var tryAnother = true
@@ -115,13 +111,11 @@ object day1 extends AdventDay(1) {
           val wordValue = nameToValueMap.get(prefix)
           if (wordValue.nonEmpty) {
             // If the updated prefix is a digit word, return its value
-            return Some((wordValue.getOrElse(0), prefixOffset.getOrElse(i)))
+            return Some(wordValue.getOrElse(0))
           } else if (namePrefixes.contains(prefix)) {
             // If the updated prefix is a valid digit word prefix, move on to the next character
-            prefixOffset = prefixOffset.orElse(Some(i))
             tryAnother = false
           } else {
-            prefixOffset = None
             prefix = prefix.substring(1)
             if (prefix.isEmpty) {
               tryAnother = false
@@ -135,9 +129,8 @@ object day1 extends AdventDay(1) {
     None
   }
 
-  def lastDigitWord(text: String): Option[(Int, Int)] = {
+  def lastDigitOrWord(text: String): Option[Int] = {
     var suffix: String = ""
-    var suffixOffset: Option[Int] = None
 
     if (text.length < 0)
       return None
@@ -149,7 +142,7 @@ object day1 extends AdventDay(1) {
       if (nextChar.isDigit) {
         // If we encountered a digit, we have not successfully consumed a valid
         // word digit, so we just return this as the first encountered value.
-        return Some((nextChar.getNumericValue, i))
+        return Some(nextChar.getNumericValue)
       } else {
         suffix = s"$nextChar$suffix"
         var tryAnother = true
@@ -157,13 +150,11 @@ object day1 extends AdventDay(1) {
           val wordValue = nameToValueMap.get(suffix)
           if (wordValue.nonEmpty) {
             // If the updated prefix is a digit word, return its value
-            return Some((wordValue.getOrElse(0), i))
+            return Some(wordValue.getOrElse(0))
           } else if (nameSuffixes.contains(suffix)) {
             // If the updated suffix is a valid digit word suffix, move on to the next character
-            suffixOffset = Some(i)
             tryAnother = false
           } else {
-            suffixOffset = None
             suffix = suffix.substring(0, suffix.length - 1)
             if (suffix.isEmpty) {
               tryAnother = false
@@ -177,22 +168,7 @@ object day1 extends AdventDay(1) {
     None
   }
 
-  def firstDigit(text: String): Option[(Int, Int)] = {
-    text
-      .zipWithIndex
-      .find(_._1.isDigit)
-      .map { case (c, i) => (c.getNumericValue, i) }
-  }
+  def firstDigit(text: String): Option[Int] = text.find(_.isDigit).map(_.getNumericValue)
 
-  def lastDigit(text: String): Option[(Int, Int)] = {
-    firstDigit(text.reverse)
-      .map({ case (v, i) =>
-        (
-          v,
-          // Not just a simple inversion since we need the index to be corrected to
-          // match the offset in the original text.
-          text.length - 1 - i
-        )
-      })
-  }
+  def lastDigit(text: String): Option[Int] = firstDigit(text.reverse)
 }
