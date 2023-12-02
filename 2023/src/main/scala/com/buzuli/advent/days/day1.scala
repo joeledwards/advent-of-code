@@ -29,21 +29,16 @@ object day1 extends AdventDay(1) {
       })
   }
 
-  def digitOrWordSums: Long = {
+  def digitOrWordSums: Long = digitOrWordValues.sum
+
+  def digitOrWordValues: List[Int] = {
     lines
       .map({ line =>
-        val value = lineToValue(line)
-        //println(s"$line => $value")
-        value
+        val first = firstDigitOrWord(line).getOrElse(0)
+        val last = lastDigitOrWord(line).getOrElse(0)
+
+        first * 10 + last
       })
-      .sum
-  }
-
-  def lineToValue(line: String): Int = {
-    val first = firstDigitOrWord(line).getOrElse(0)
-    val last = lastDigitOrWord(line).getOrElse(0)
-
-    first * 10 + last
   }
 
   def nameToValueMap: Map[String, Int] = Map(
