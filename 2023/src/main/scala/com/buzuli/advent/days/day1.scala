@@ -116,6 +116,8 @@ object day1 extends AdventDay(1) {
             // If the updated prefix is a valid digit word prefix, move on to the next character
             tryAnother = false
           } else {
+            // Otherwise, we need to keep trimming off the beginning of the prefix until we either arrive
+            // at a valid prefix, or we have an empty string
             prefix = prefix.substring(1)
             if (prefix.isEmpty) {
               tryAnother = false
@@ -155,6 +157,8 @@ object day1 extends AdventDay(1) {
             // If the updated suffix is a valid digit word suffix, move on to the next character
             tryAnother = false
           } else {
+            // Otherwise, we need to keep trimming off the end of the suffix until we either arrive
+            // at a valid suffix, or we have an empty string
             suffix = suffix.substring(0, suffix.length - 1)
             if (suffix.isEmpty) {
               tryAnother = false
