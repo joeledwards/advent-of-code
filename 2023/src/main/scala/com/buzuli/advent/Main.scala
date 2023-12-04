@@ -19,11 +19,25 @@ object Main extends App with LazyLogging {
     Future.successful(AdventContext(concurrency = concurrency))
   }
 
+  sealed trait RunMode
+
+  case object RunAll extends RunMode
+  case class RunOne(day: Int) extends RunMode
+  case class RunOnly(days: Set[Int]) extends RunMode
+  case class RunExcept(days: Set[Int]) extends RunMode
+
   // Run advent days
   def run(context: AdventContext): Future[AdventContext] = {
-    val dayFilter: AdventDay => Boolean = _ => true // ALL
-    //val dayFilter: AdventDay => Boolean = _.day == 3 // Just this day
-    //val dayFilter: AdventDay => Boolean = _.day != 11 // Remove this day
+    val runMode: RunMode = RunOne(3)
+
+    val dayFilter: AdventDay => Boolean = { adventDay =>
+      runMode match {
+        case RunAll => true
+        case RunOne(dayNumber) => adventDay.day == dayNumber
+        case RunOnly(daysToRun) => daysToRun.contains(adventDay.day)
+        case RunExcept(daysToSkip) => !daysToSkip.contains(adventDay.day)
+      }
+    }
 
     Days.execute(context, dayFilter) map { results =>
       context.copy(results = results)
