@@ -91,15 +91,16 @@ object day3 extends AdventDay(3) {
 
   def parseLine(line: String, y: Int): List[MapElement] = {
     var buffer: Option[(String, Point)] = None
+    def collectAndEmptyBuffer(): List[NumericWord] = {
+      val b = buffer.map({ case (w, p) => NumericWord(w, p) }).toList
+      buffer = None
+      b
+    }
 
     val collected: List[MapElement] = line
       .zipWithIndex
       .flatMap({
-        case ('.', _) => {
-          val b = buffer.map({ case (w, p) => NumericWord(w, p) }).toList
-          buffer = None
-          b
-        }
+        case ('.', _) => collectAndEmptyBuffer()
         case (c, x) if c.isDigit => {
           buffer = {
             buffer match {
@@ -110,17 +111,12 @@ object day3 extends AdventDay(3) {
           Nil
         }
         case (c, x) => {
-          val b = buffer.map({ case (w, p) => NumericWord(w, p) }).toList
-          buffer = None
-          b ::: List(Symbol(c, Point(x, y)))
+          collectAndEmptyBuffer() ::: List(Symbol(c, Point(x, y)))
         }
       }
       ).toList
 
-    val r = collected ::: buffer.map({ case (w, p) => NumericWord(w, p) }).toList
-    //println(s"$line => $r")
-
-    r
+    collected ::: collectAndEmptyBuffer()
   }
 
   lazy val numbers: List[NumericWord] = mapElements collect { case e: NumericWord => e }
