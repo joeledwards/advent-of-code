@@ -37,28 +37,28 @@ class day5spec extends UnitSpec {
   "day5.Mapper" when {
     "mapping a contained value" should {
       "return the mapped value" in {
-        Mapper("a", "b", List(RangeMap(1, 1, 1))).map(1) shouldBe 1
-        Mapper("a", "b", List(RangeMap(1, 1, 2))).map(2) shouldBe 2
-        Mapper("a", "b", List(RangeMap(1, 2, 2))).map(2) shouldBe 3
-        Mapper("a", "b", List(RangeMap(50, 98, 2))).map(50) shouldBe 98
-        Mapper("a", "b", List(RangeMap(50, 98, 2))).map(51) shouldBe 99
+        RangeMapper("a", "b", List(RangeMap(1, 1, 1))).map(1) shouldBe 1
+        RangeMapper("a", "b", List(RangeMap(1, 1, 2))).map(2) shouldBe 2
+        RangeMapper("a", "b", List(RangeMap(1, 2, 2))).map(2) shouldBe 3
+        RangeMapper("a", "b", List(RangeMap(50, 98, 2))).map(50) shouldBe 98
+        RangeMapper("a", "b", List(RangeMap(50, 98, 2))).map(51) shouldBe 99
 
-        Mapper("a", "b", List(RangeMap(1, 1, 1), RangeMap(2, 2, 2))).map(2) shouldBe 2
-        Mapper("a", "b", List(RangeMap(1, 2, 1), RangeMap(2, 3, 2))).map(2) shouldBe 3
+        RangeMapper("a", "b", List(RangeMap(1, 1, 1), RangeMap(2, 2, 2))).map(2) shouldBe 2
+        RangeMapper("a", "b", List(RangeMap(1, 2, 1), RangeMap(2, 3, 2))).map(2) shouldBe 3
 
-        Mapper("a", "b", List(RangeMap(1, 2, 2), RangeMap(2, 4, 2))).map(2) shouldBe 3
-        Mapper("a", "b", List(RangeMap(1, 3, 2), RangeMap(2, 1, 2))).map(2) shouldBe 4
+        RangeMapper("a", "b", List(RangeMap(1, 2, 2), RangeMap(2, 4, 2))).map(2) shouldBe 3
+        RangeMapper("a", "b", List(RangeMap(1, 3, 2), RangeMap(2, 1, 2))).map(2) shouldBe 4
       }
     }
 
     "mapping a non-contained value" should {
       "return the original value" in {
-        Mapper("a", "b", List(RangeMap(1, 1, 1))).map(2) shouldBe 2
-        Mapper("a", "b", List(RangeMap(1, 1, 2))).map(3) shouldBe 3
-        Mapper("a", "b", List(RangeMap(1, 2, 2))).map(3) shouldBe 3
+        RangeMapper("a", "b", List(RangeMap(1, 1, 1))).map(2) shouldBe 2
+        RangeMapper("a", "b", List(RangeMap(1, 1, 2))).map(3) shouldBe 3
+        RangeMapper("a", "b", List(RangeMap(1, 2, 2))).map(3) shouldBe 3
 
-        Mapper("a", "b", List(RangeMap(50, 98, 2))).map(49) shouldBe 49
-        Mapper("a", "b", List(RangeMap(50, 98, 2))).map(52) shouldBe 52
+        RangeMapper("a", "b", List(RangeMap(50, 98, 2))).map(49) shouldBe 49
+        RangeMapper("a", "b", List(RangeMap(50, 98, 2))).map(52) shouldBe 52
       }
     }
   }

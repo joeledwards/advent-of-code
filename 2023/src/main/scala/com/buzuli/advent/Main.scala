@@ -28,7 +28,7 @@ object Main extends App with LazyLogging {
 
   // Run advent days
   def run(context: AdventContext): Future[AdventContext] = {
-    val runMode: RunMode = RunOne(5)
+    val runMode: RunMode = RunOne(7)
 
     val dayFilter: AdventDay => Boolean = { adventDay =>
       runMode match {
