@@ -9,8 +9,9 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 object Main extends App with LazyLogging {
-  //val concurrency: AdventConcurrency = AdventSerial
-  val concurrency: AdventConcurrency = AdventConcurrent(8)
+  val runMode: RunMode = RunOne(15)
+
+  val concurrency: AdventConcurrency = AdventSerial
   val cec: CustomExecutionContext = ExecutionContexts.executor(8)
   implicit val ec: ExecutionContext = cec.ec
 
@@ -28,8 +29,6 @@ object Main extends App with LazyLogging {
 
   // Run advent days
   def run(context: AdventContext): Future[AdventContext] = {
-    val runMode: RunMode = RunOne(7)
-
     val dayFilter: AdventDay => Boolean = { adventDay =>
       runMode match {
         case RunAll => true
