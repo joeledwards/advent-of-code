@@ -15,7 +15,7 @@ object day9 extends AdventDay(9) {
   }
 
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    ""
+    s"${puzzle2SumExtrapolatedPrevValues}"
   }
 
   def puzzle1SumExtrapolatedNextValues: Long = {
@@ -25,39 +25,55 @@ object day9 extends AdventDay(9) {
       .sum
   }
 
+  def puzzle2SumExtrapolatedPrevValues: Long = {
+    lines
+      .map(_.split(" ").flatMap(_.toLongOption).toList)
+      .map(extrapolatePrevValue(_))
+      .sum
+  }
+
   case class Context(
     reduction: List[Long],
+    first: Option[Long],
     prev: Option[Long],
-    sum: Option[Long],
+    max: Option[Long],
+    min: Option[Long],
   )
 
-  def extrapolateNextValue(values: List[Long]): Long = {
-    var sum: Option[Long] = None
+  def extrapolatePrevAndNextValues(values: List[Long]): (Long, Long) = {
+    var min: Option[Long] = None
+    var max: Option[Long] = None
     var reduction: List[Long] = values
-    var terminals: List[Long] = Nil
+    var starts: List[Long] = Nil
+    var ends: List[Long] = Nil
 
-    while (!sum.contains(0L)) {
-      val context = reduction.foldLeft[Context](Context(Nil, None, None))({ (context, value) =>
+    while (!(min.contains(0L) && max.contains(0L))) {
+      val context = reduction.foldLeft[Context](Context(Nil, None, None, None, None))({ (context, value) =>
         context match {
-          case Context(r, Some(prev), Some(s)) => {
+          case Context(r, Some(first), Some(prev), Some(min), Some(max)) => {
             val diff = value - prev
-            Context(diff :: r, Some(value), Some(s + diff))
+            Context(diff :: r, Some(first), Some(value), Some(Math.max(max, diff)), Some(Math.min(min, diff)))
           }
-          case Context(r, _, _) => {
-            Context(r, Some(value), Some(0L))
+          case Context(r, _, _, _, _) => {
+            Context(r, Some(value), Some(value), Some(0L), Some(0L))
           }
         }
-      })
+      }
+      )
 
-      sum = context.sum
+      max = context.max
+      min = context.min
       reduction = context.reduction.reverse
-      terminals = context.prev.getOrElse(0L) :: terminals
+      starts = context.first.getOrElse(0L) :: starts
+      ends = context.prev.getOrElse(0L) :: ends
     }
 
-    val prediction = terminals.sum
-
-    println(s"${values} => ${prediction}")
-
-    prediction
+    val prev = starts.foldLeft(0L)((acc, v) => v - acc)
+    val next = ends.sum
+    (prev, next)
   }
+
+  def extrapolatePrevValue(values: List[Long]): Long = extrapolatePrevAndNextValues(values)._1
+
+  def extrapolateNextValue(values: List[Long]): Long = extrapolatePrevAndNextValues(values)._2
 }
