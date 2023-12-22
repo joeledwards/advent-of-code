@@ -21,28 +21,8 @@ object day11 extends AdventDay(11) {
   lazy val puzzle1ExpanseSums: Long = {
     val expandedUniverse = expanded(universe)
 
-    /*
-    val uniMap = expandedUniverse
-      .map(g => g.x -> g.y -> g)
-      .toMap
-
-    val xMax = expandedUniverse.map(_.x).max
-    val yMax = expandedUniverse.map(_.y).max
-
-    println({
-      Range.inclusive(0, yMax).map({ y =>
-        Range.inclusive(0, xMax).map({ x =>
-          uniMap.get(x -> y) match {
-            case None => "."
-            case Some(Galaxy(id, _, _)) => s"${id}"
-            //case Some(Galaxy(_, _, _)) => "#"
-          }
-        }
-        ).mkString("")
-      }
-      ).mkString("\n")
-    })
-    */
+    //printUniverse(universe)
+    //printUniverse(expandedUniverse)
 
     def collectMinDistances(galaxies: List[Galaxy]): List[Long] = {
       galaxies match {
@@ -55,6 +35,30 @@ object day11 extends AdventDay(11) {
     }
 
     collectMinDistances(expandedUniverse).sum
+  }
+
+  def printUniverse(universe: List[Galaxy]): Unit = {
+    val uniMap = universe
+      .map(g => g.x -> g.y -> g)
+      .toMap
+
+    val xMax = universe.map(_.x).max
+    val yMax = universe.map(_.y).max
+
+    println({
+      Range.inclusive(0, yMax.toInt).map(_.toLong).map({ y =>
+        Range.inclusive(0, xMax.toInt).map(_.toLong).map({ x =>
+          uniMap.get(x -> y) match {
+            case None => "."
+            case Some(Galaxy(id, _, _)) => s"${id}"
+            //case Some(Galaxy(_, _, _)) => "#"
+          }
+        }
+        ).mkString("")
+      }
+      ).mkString("\n")
+    }
+    )
   }
 
   lazy val puzzle2MassExpanseSums: Long = {
