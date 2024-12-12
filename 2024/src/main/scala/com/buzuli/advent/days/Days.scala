@@ -9,9 +9,9 @@ import scala.concurrent.{ExecutionContext, Future}
 object Days extends LazyLogging {
   val dayList: List[AdventDay] = List(
     day1,
-    //day2,
-    //day3,
-    //day4,
+    day2,
+    day3,
+    day4,
     //day5,
     //day6,
     //day7,
