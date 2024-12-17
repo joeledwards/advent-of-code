@@ -60,7 +60,7 @@ object day4 extends AdventDay(4) {
     def key: (Long, Long) = x -> y
   }
 
-  val letters = lines
+  lazy val letters = lines
     .reverse
     .zipWithIndex
     .flatMap(yPair => {
@@ -74,12 +74,12 @@ object day4 extends AdventDay(4) {
         })
     })
 
-  val map = letters
+  lazy val map = letters
     .map(letter => letter.key -> letter)
     .toMap
 
-  val xMax: Long = letters.map(_.x).max
-  val yMax: Long = letters.map(_.y).max
+  lazy val xMax: Long = letters.map(_.x).max
+  lazy val yMax: Long = letters.map(_.y).max
 
   def xmasCount: Long = {
     def checkVector(vector: (Letter, Letter, Letter)): Boolean = {
