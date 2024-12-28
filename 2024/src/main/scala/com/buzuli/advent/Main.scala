@@ -9,7 +9,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 object Main extends App with LazyLogging {
-  val runMode: RunMode = RunOne(6)
+  val runMode: RunMode = RunOne(7)
 
   val concurrency: AdventConcurrency = AdventSerial
   val cec: CustomExecutionContext = ExecutionContexts.executor(8)
