@@ -28,7 +28,7 @@ object day6 extends AdventDay(6) {
     val isStart: Boolean = v == '^'
   }
 
-  val tiles: List[Tile] = {
+  lazy val tiles: List[Tile] = {
     val yMax = lines.size - 1
     lines
       .zipWithIndex
