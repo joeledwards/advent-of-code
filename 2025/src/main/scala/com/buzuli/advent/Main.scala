@@ -49,7 +49,7 @@ object Main extends App with LazyLogging {
   }
 
   Try {
-    logger.info("Advent of Code 2024")
+    logger.info("Advent of Code 2025")
 
     Await.result(
       {
