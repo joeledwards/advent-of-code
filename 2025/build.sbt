@@ -3,7 +3,7 @@ val projectName = "advent-2025"
 
 name := projectName
 version := "1.0.0"
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.18"
 organization := "com.buzuli"
 organizationName := "Buzuli Bytes"
 
@@ -53,14 +53,14 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
 
 
 // Helpful when testing (recommended by scalatest)
-logBuffered in Test := false
+Test / logBuffered := false
 
 // The single Java source acts as the entry point for our plugin
 compileOrder := CompileOrder.ScalaThenJava
 
 // Target Java SE 8
-scalacOptions += "-target:jvm-8"
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+scalacOptions += "-target:jvm-21"
+javacOptions ++= Seq("-source", "21", "-target", "21", "-Xlint")
 
 val gitInfo = {
   import scala.sys.process._
@@ -88,9 +88,9 @@ artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
   buildArtifactName(s".${artifact.extension}")
 }
 
-mainClass in assembly := Some("com.buzuli.advent.Main")
+assembly / mainClass := Some("com.buzuli.advent.Main")
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case PathList(path, xs @ _*) if path.startsWith("jackson-") => MergeStrategy.last
   case PathList("META-INF", "Main-Class", "com.buzuli.advent.Main") => MergeStrategy.first
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
