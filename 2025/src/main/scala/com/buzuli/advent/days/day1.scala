@@ -11,11 +11,13 @@ object day1 extends AdventDay(1) {
   }
 
   def puzzle1(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    s"${totalDistance}"
+    //s"${totalDistance}"
+    ""
   }
   
   def puzzle2(context: AdventContext)(implicit ec: ExecutionContext): Future[String] = Future {
-    s"${similarityScore}"
+    //s"${similarityScore}"
+    ""
   }
 
   def totalDistance: Long = {
